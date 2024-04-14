@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Poppins&display=swap" rel="stylesheet">
+    <title>search</title>
+</head>
+<body>
+    <div class="nav-bar">
+        <nav>
+            <a href="/signup">signup</a>
+        </nav>
+        <nav>
+            <img src="images/brushes.png" alt="brushes" width="300px" height="300px"/>
+        </nav>
+        <nav>
+            <a href="/login">login</a>
+        </nav>
+    </div>
+    <div class="header-bar">
+        <h1>Search</h1>
+        <form action="/search" method="get">
+            <label for="query">Search:</label>
+            <input type="text" id="query" name="query">
+            <select name="database">
+                <option value="PostgreSQL">PostgreSQL</option>
+                <option value="MongoDB">MongoDB</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <div class="nav-bar">
+        <nav>
+            <img src="images/concealer.png" alt="concealer" width="300px" height="300px"/>
+        </nav>
+        <nav>
+            <a href="/search">search</a>
+        </nav>
+        <nav>
+            <img src="images/powder.png" alt="powder" width="300px" height="300px"/>
+        </nav>
+        
+    </div>
+</body>
+</html>
