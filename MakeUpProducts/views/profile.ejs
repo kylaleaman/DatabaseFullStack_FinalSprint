@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Allura&family=Poppins&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <title>search</title>
+    <title>GlamQuest</title>
 </head>
 <body>
     <div class="nav-bar">
@@ -23,20 +23,25 @@
             <a href="/login">login</a>
         </nav>
     </div>
+
     <div class="icon-bar">
         <span class="material-symbols-outlined"><a href="/">home</a></span>
         <span class="material-symbols-outlined"><a href="/profile">person</a></span>
     </div>
     <div class="header-bar">
-        <h1>Search Results</h1>
+            <h1>Profile</h1>
+            <p>Name: <%= user.first_name %> <%= user.last_name %></p>
+            <p>Email: <%= user.email %></p>
+            <p>Search History: </p>  
     </div>
+    
 
     <div class="nav-bar">
         <nav>
             <img src="images/concealer.png" alt="concealer" width="300px" height="300px"/>
         </nav>
         <nav>
-            <a href="/search">search</a>
+            <a href="<%= isAuthenticated ? '/search' : '/login' %>">Search</a>
         </nav>
         <nav>
             <img src="images/powder.png" alt="powder" width="300px" height="300px"/>

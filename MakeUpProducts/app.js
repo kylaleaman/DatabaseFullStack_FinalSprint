@@ -29,10 +29,6 @@ app.use(session({
   saveUninitialized: false 
 }));
 
-
-// Mock user data (replace with database later)
-const users = [];
-
 // Routes
 app.get('/', (req, res) => {
   res.render('index', { isAuthenticated: req.session.user });
@@ -49,6 +45,39 @@ app.get('/login', (req, res) => {
 app.get('/search', (req, res) => {
   res.render('search', { isAuthenticated: req.session.user });
 });
+
+app.get('/results', (req, res) => {
+  res.render('results', { isAuthenticated: req.session.user });
+});
+
+app.get('/profile', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      res.redirect('/login');
+      return;
+    }
+
+    const userId = req.session.user.user_id; 
+    const userQuery = await pool.query('SELECT first_name, last_name, email FROM users WHERE user_id = $1', [userId]); 
+    const user = userQuery.rows[0];
+
+    if (!user) {
+      console.log('Error - user not found');
+      res.status(404).send('User not found');
+      return;
+    }
+
+    console.log('Retrieved user from database:', user);
+    res.render('profile', { isAuthenticated: true, user: user });
+
+  } catch (error) { 
+    console.error('Error retrieving user information:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+
+
 
 // POST routes to handle submissions of forms
 app.post('/signup', async (req, res) => {
@@ -87,14 +116,14 @@ app.post('/login', async (req, res) => {
     console.log('User logged in successfully:', user);
     
     req.session.user = user;
-    const originalUrl = req.session.originalUrl || '/';
-    delete req.session.originalUrl;
-    res.redirect(originalUrl);
+    res.redirect('/profile');
+
   } catch (error) {
     console.error('Error retrieving user: ', error);
     res.status(500).send('Internal server error');
   }
 });
+
 
 
 app.get('/logout', (req, res) => {
@@ -103,6 +132,16 @@ app.get('/logout', (req, res) => {
 });
 
 app.post('/search', (req, res) => {
+  console.log(req.body);
+  res.redirect('/');
+});
+
+app.post('/results', (req, res) => {
+  console.log(req.body);
+  res.redirect('/');
+});
+
+app.post('/profile', (req, res) => {
   console.log(req.body);
   res.redirect('/');
 });
