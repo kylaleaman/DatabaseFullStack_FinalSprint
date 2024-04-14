@@ -14,15 +14,16 @@
 <body>
     <div class="nav-bar">
         <nav>
-            <a href="/signup">signup</a>
+            <a href="/profile">profile</a>
         </nav>
         <nav>
             <img src="images/brushes.png" alt="brushes" width="300px" height="300px"/>
         </nav>
         <nav>
-            <a href="/login">login</a>
+            <a href="<%= isAuthenticated ? '/search' : '/login' %>">Search</a>
         </nav>
     </div>
+    
     <div class="home-title">
         <span class="material-symbols-outlined">home</span>
         <a href = "/">
@@ -48,7 +49,7 @@
             <img src="images/concealer.png" alt="concealer" width="300px" height="300px"/>
         </nav>
         <nav>
-            <a href="/search">search</a>
+            <a href="/login">login</a>
         </nav>
         <nav>
             <img src="images/powder.png" alt="powder" width="300px" height="300px"/>

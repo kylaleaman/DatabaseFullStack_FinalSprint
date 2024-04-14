@@ -246,6 +246,7 @@ select::-webkit-outer-spin-button {
 .table-container table {
     border-collapse: collapse;
     width: 100%;
+    color: #ADA59F;
 }
 
 .table-container th, .table-container td {

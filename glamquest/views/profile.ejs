@@ -20,8 +20,8 @@
             <img src="images/brushes.png" alt="brushes" width="300px" height="300px"/>
         </nav>
         <nav>
-            <a href="/login">login</a>
-        </nav>
+            <a href="<%= isAuthenticated ? '/search' : '/login' %>">Search</a>
+        </nav>        
     </div>
 
     <div class="home-title">
@@ -31,14 +31,24 @@
         </a>
     </div>
     <div class="header-bar">
-            <h1>Profile</h1>
-            <p>Name: <%= user.first_name %> <%= user.last_name %></p>
-            <p>Email: <%= user.email %></p>
-            <p>Search History: </p> 
-            <!-- Add Search History here-->
-            <form action="/logout" method="post">
-                <button type="submit">Logout</button>
-            </form>
+        <h1>Profile</h1>
+        <p>Welcome <%= user.first_name %> <%= user.last_name %></p>
+        <p>Email: <%= user.email %></p>
+        <p>Search History: </p> 
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Search</th>
+                    <th>Timestamp</th>
+                </tr>
+                <% searchHistory.forEach(item => { %>
+                    <tr>
+                        <td class="search-query-cell"><%= item.search_query %></td>
+                        <td class="timestamp-cell"><%= item.search_timestamp %></td>
+                    </tr>
+                <% }); %>
+            </table>
+        </div>
     </div>
     
 
@@ -47,7 +57,7 @@
             <img src="images/concealer.png" alt="concealer" width="300px" height="300px"/>
         </nav>
         <nav>
-            <a href="<%= isAuthenticated ? '/search' : '/login' %>">Search</a>
+            <a href="/login">login</a>
         </nav>
         <nav>
             <img src="images/powder.png" alt="powder" width="300px" height="300px"/>
