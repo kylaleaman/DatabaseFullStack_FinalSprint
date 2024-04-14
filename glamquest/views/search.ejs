@@ -28,7 +28,17 @@
         <span class="material-symbols-outlined"><a href="/profile">person</a></span>
     </div>
     <div class="header-bar">
-        <h1>Search Results</h1>
+        <h1>Search</h1>
+        <p>You can search for a type of product, brand or a specific product!</p>
+        <form action="/search" method="POST">
+            <label for="query">Search:</label>
+            <input type="text" id="query" name="query">
+            <select name="database">
+                <option value="PostgreSQL">PostgreSQL</option>
+                <option value="MongoDB">MongoDB</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
     </div>
 
     <div class="nav-bar">

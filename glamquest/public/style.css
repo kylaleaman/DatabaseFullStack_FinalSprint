@@ -177,6 +177,29 @@ select::-webkit-outer-spin-button {
     margin: 0; 
 }
 
+.table-container {
+    margin-top: 20px; /* Adjust as needed */
+}
+
+.table-container table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-container th, .table-container td {
+    text-align: left;
+    padding: 8px;
+}
+
+.table-container th {
+    background-color: #f2f2f2;
+    border: none;
+}
+
+.table-container td {
+    border: none;
+}
+
 @media only screen and (min-width: 768px) {
     .nav-bar {
         justify-content: space-evenly;
