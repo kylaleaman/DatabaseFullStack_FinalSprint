@@ -8,13 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Allura&family=Poppins&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <title>search results</title>
 </head>
 <body>
     <div class="nav-bar">
         <nav>
-            <a href="/signup">signup</a>
+            <a href="/profile">profile</a>
         </nav>
         <nav>
             <img src="images/brushes.png" alt="brushes" width="300px" height="300px"/>
@@ -24,9 +23,11 @@
         </nav>
     </div>
 
-    <div class="icon-bar">
-        <span class="material-symbols-outlined"><a href="/">home</a></span>
-        <span class="material-symbols-outlined"><a href="/profile">person</a></span>
+    <div class="home-title">
+        <span class="material-symbols-outlined">home</span>
+        <a href = "/">
+        <h5>GlamQuest</h5>
+        </a>
     </div>
 
     <div class="header-bar">
@@ -43,7 +44,7 @@
                     <tr>
                         <td><%= result.product_name %></td>
                         <td><%= result.product_brand %></td>
-                        <td><%= result.product_price %></td>
+                        <td>$<%= parseFloat(result.product_price).toFixed(2) %></td>
                         <td><%= result.makeup_store %></td>
                     </tr>
                 <% }); %>

@@ -53,6 +53,11 @@ app.get('/login', (req, res) => {
   res.render('login', { isAuthenticated: req.session.user });
 });
 
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/login');
+})
+
 app.get('/search', (req, res) => {
   res.render('search', { isAuthenticated: req.session.user });
 });
@@ -110,21 +115,11 @@ app.post('/login', async (req, res) => {
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
 
-    if (!user) {
-      console.log('User not found');
-      res.status(401).send('User not found');
-      return;
-    }
-
-    console.log('Retrieved user from database:', user);
-
     if (!bcrypt.compareSync(password, user.password)) {
-      console.log('Invalid password');
-      res.status(401).send('Invalid username or password');
+      req.session.flash = { type: 'error', message: 'Invalid username or password.' };
+      res.redirect('/login');
       return;
     }
-
-    console.log('User logged in successfully:', user);
     
     req.session.user = user;
     res.redirect('/profile');
@@ -135,28 +130,27 @@ app.post('/login', async (req, res) => {
   }
 });
 
-
-
-app.get('/logout', (req, res) => {
+app.post('/logout', (req, res) => {
   req.session.destroy();
   res.redirect('/login');
 });
 
-app.post('/search', async (req, res) => {
+
+app.post('/search', isAuthenticated, async (req, res) => {
   const { query, database } = req.body;
 
   try {
     let results;
 
     if (database === 'PostgreSQL') {
-      const pgQuery = `SELECT product_name, product_brand, product_price, makeup_store FROM products WHERE product_name ILIKE $1 OR product_brand ILIKE $1 OR product_category ILIKE $1`; 
+      const pgQuery = `SELECT product_name, product_brand, product_price, makeup_store FROM makeup_products WHERE product_name ILIKE $1 OR product_brand ILIKE $1 OR product_category ILIKE $1`; 
       const pgResult = await pool.query(pgQuery, [`%${query}%`]);
       results = pgResult.rows;
     } else if (database === 'MongoDB') {
       await client.connect();
       const collection = client.db('MakeupSearch').collection('makeup_products');
       mongoResult = await collection.find({
-        $of: [
+        $or: [
           { product_name: { $regex: query, $options: 'i' } },
           { product_brand: { $regex: query, $options: 'i' } },
           { product_category: { $regex: query, $options: 'i' } }
@@ -167,7 +161,7 @@ app.post('/search', async (req, res) => {
 
     res.render('results', { results });
   } catch (error) {
-    console.error('Error searching for products:', error);
+    console.error('Error searching for make up products:', error);
     res.status(500).send('Internal server error');
   }
 });
