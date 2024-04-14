@@ -3,16 +3,21 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const isAuthenticated = require('./authMiddleware');
-
-
+const { Pool } = require('pg');
+const { MongoClient } = require('mongodb');
+const ejs = require('ejs');
 const app = express();
 const port = 3000;
 
 app.set('view engine', 'ejs');
-const ejs = require('ejs');
 app.use(express.static('public'));
-
-const { Pool } = require('pg');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(session({
+  secret: 'harlee-buddy', 
+  resave: false,
+  saveUninitialized: false 
+}));
 
 const pool = new Pool({
   user: 'postgres',
@@ -22,12 +27,18 @@ const pool = new Pool({
   port: 5432,
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-  secret: 'harlee-buddy', 
-  resave: false,
-  saveUninitialized: false 
-}));
+const uri = 'mongodb://localhost:27017';
+const client = new MongoClient(uri);
+
+async function connectToMongo() {
+  try{
+    await client.connect();
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+  }
+}
+connectToMongo();
 
 // Routes
 app.get('/', (req, res) => {
@@ -131,9 +142,34 @@ app.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-app.post('/search', (req, res) => {
-  console.log(req.body);
-  res.redirect('/');
+app.post('/search', async (req, res) => {
+  const { query, database } = req.body;
+
+  try {
+    let results;
+
+    if (database === 'PostgreSQL') {
+      const pgQuery = `SELECT product_name, product_brand, product_price, makeup_store FROM products WHERE product_name ILIKE $1 OR product_brand ILIKE $1 OR product_category ILIKE $1`; 
+      const pgResult = await pool.query(pgQuery, [`%${query}%`]);
+      results = pgResult.rows;
+    } else if (database === 'MongoDB') {
+      await client.connect();
+      const collection = client.db('MakeupSearch').collection('makeup_products');
+      mongoResult = await collection.find({
+        $of: [
+          { product_name: { $regex: query, $options: 'i' } },
+          { product_brand: { $regex: query, $options: 'i' } },
+          { product_category: { $regex: query, $options: 'i' } }
+        ]
+      }).toArray();
+      results = mongoResult;
+    }
+
+    res.render('results', { results });
+  } catch (error) {
+    console.error('Error searching for products:', error);
+    res.status(500).send('Internal server error');
+  }
 });
 
 app.post('/results', (req, res) => {
