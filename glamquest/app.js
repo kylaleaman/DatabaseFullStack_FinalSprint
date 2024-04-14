@@ -66,13 +66,13 @@ app.get('/results', (req, res) => {
   res.render('results', { isAuthenticated: req.session.user });
 });
 
-app.get('/profile', async (req, res) => {
+app.get('/profile', isAuthenticated, async (req, res) => {
   try {
     if (!req.session.user) {
       res.redirect('/login');
       return;
     }
-
+    // Get user information
     const userId = req.session.user.user_id; 
     const userQuery = await pool.query('SELECT first_name, last_name, email FROM users WHERE user_id = $1', [userId]); 
     const user = userQuery.rows[0];
@@ -83,15 +83,18 @@ app.get('/profile', async (req, res) => {
       return;
     }
 
+    //Get search history 
+    const searchHistoryQuery = await pool.query('SELECT search_query, search_timestamp FROM search_history WHERE user_id = $1', [userId]);
+    const searchHistory = searchHistoryQuery.rows;
+
     console.log('Retrieved user from database:', user);
-    res.render('profile', { isAuthenticated: true, user: user });
+    res.render('profile', { isAuthenticated: true, user: user, searchHistory: searchHistory });
 
   } catch (error) { 
     console.error('Error retrieving user information:', error);
     res.status(500).send('Internal server error');
   }
 });
-
 
 
 
@@ -122,7 +125,7 @@ app.post('/login', async (req, res) => {
     }
     
     req.session.user = user;
-    res.redirect('/profile');
+    res.redirect('/search');
 
   } catch (error) {
     console.error('Error retrieving user: ', error);
@@ -140,8 +143,10 @@ app.post('/search', isAuthenticated, async (req, res) => {
   const { query, database } = req.body;
 
   try {
+    const userId = req.session.user.user_id;
+    await pool.query('INSERT INTO search_history (user_id, search_query) VALUES ($1, $2)', [userId, query]);
+    
     let results;
-
     if (database === 'PostgreSQL') {
       const pgQuery = `SELECT product_name, product_brand, product_price, makeup_store FROM makeup_products WHERE product_name ILIKE $1 OR product_brand ILIKE $1 OR product_category ILIKE $1`; 
       const pgResult = await pool.query(pgQuery, [`%${query}%`]);
