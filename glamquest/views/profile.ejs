@@ -34,8 +34,11 @@
         <h1>Profile</h1>
         <p>Welcome <%= user.first_name %> <%= user.last_name %></p>
         <p>Email: <%= user.email %></p>
-        <p>Search History: </p> 
-        <div class="table-container">
+        <form action="/logout" method="post">
+            <button type="submit">Logout</button>
+        </form>
+        <p class="search-history-title">Search History: </p> 
+        <div class="new-table-container">
             <table>
                 <tr>
                     <th>Search</th>
@@ -43,8 +46,8 @@
                 </tr>
                 <% searchHistory.forEach(item => { %>
                     <tr>
-                        <td class="search-query-cell"><%= item.search_query %></td>
-                        <td class="timestamp-cell"><%= item.search_timestamp %></td>
+                        <td><%= item.search_query %></td>
+                        <td><%= item.search_timestamp %></td>
                     </tr>
                 <% }); %>
             </table>

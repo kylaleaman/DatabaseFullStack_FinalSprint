@@ -33,7 +33,6 @@ const client = new MongoClient(uri);
 async function connectToMongo() {
   try{
     await client.connect();
-    console.log('Connected to MongoDB');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
   }
@@ -184,3 +183,5 @@ app.post('/profile', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
 });
+
+module.exports = app;
