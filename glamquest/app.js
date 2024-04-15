@@ -19,6 +19,7 @@ app.use(session({
   saveUninitialized: false 
 }));
 
+// Connecting with PostgreSQL database
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
@@ -27,6 +28,7 @@ const pool = new Pool({
   port: 5432,
 });
 
+//Connecting with MongoDB database
 const uri = 'mongodb://localhost:27017';
 const client = new MongoClient(uri);
 
@@ -39,7 +41,7 @@ async function connectToMongo() {
 }
 connectToMongo();
 
-// Routes
+// GET Routes
 app.get('/', (req, res) => {
   res.render('index', { isAuthenticated: req.session.user });
 });
@@ -65,13 +67,14 @@ app.get('/results', (req, res) => {
   res.render('results', { isAuthenticated: req.session.user });
 });
 
+// GET route to add personal information as well as search history onto the profile page
 app.get('/profile', isAuthenticated, async (req, res) => {
   try {
     if (!req.session.user) {
       res.redirect('/login');
       return;
     }
-    // Get user information
+    // Get user information for profile
     const userId = req.session.user.user_id; 
     const userQuery = await pool.query('SELECT first_name, last_name, email FROM users WHERE user_id = $1', [userId]); 
     const user = userQuery.rows[0];
@@ -82,7 +85,7 @@ app.get('/profile', isAuthenticated, async (req, res) => {
       return;
     }
 
-    //Get search history 
+    //Get search history for profile
     const searchHistoryQuery = await pool.query('SELECT search_query, search_timestamp FROM search_history WHERE user_id = $1', [userId]);
     const searchHistory = searchHistoryQuery.rows;
 
@@ -97,7 +100,7 @@ app.get('/profile', isAuthenticated, async (req, res) => {
 
 
 
-// POST routes to handle submissions of forms
+// POST route to handle the insertion of user information used to login, search and create profile
 app.post('/signup', async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
@@ -111,6 +114,8 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+// POST route to authorize user by email and password and allow access to profile and search pages
+// Retrieves information from database
 app.post('/login', async (req, res) => { 
   const { email, password } = req.body;
   try {
@@ -132,11 +137,14 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// POST route to logout 
 app.post('/logout', (req, res) => {
   req.session.destroy();
   res.redirect('/login');
 });
 
+// POST route to search - can't use unless logged in, allows search for key queries product name, brand 
+// and category. Retrieves results from database and displays them on search results page
 
 app.post('/search', isAuthenticated, async (req, res) => {
   const { query, database } = req.body;
@@ -170,16 +178,19 @@ app.post('/search', isAuthenticated, async (req, res) => {
   }
 });
 
+// POST route for search result page
 app.post('/results', (req, res) => {
   console.log(req.body);
   res.redirect('/');
 });
 
+// POST route for profile page
 app.post('/profile', (req, res) => {
   console.log(req.body);
   res.redirect('/');
 });
 
+// Function to listen to port and show application
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
 });
