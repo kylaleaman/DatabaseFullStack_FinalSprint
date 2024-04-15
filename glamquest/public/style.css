@@ -282,6 +282,7 @@ select::-webkit-outer-spin-button {
 .new-table-container table {
     width: 100%;
     border-collapse: collapse;
+    color: #ADA59F;
 }
 
 .new-table-container th,
